@@ -1,57 +1,66 @@
-﻿using System.Linq.Expressions;
+﻿
+using GuessNumberGame;
+using System.Xml;
 
-class Game
+
+Random rnd = new Random();
+int bottom, top;
+int trialNumber;
+
+do
 {
-    public void Start()
+    int answer;
+
+    Console.WriteLine("1 - play, 0 - exit");
+    if(!int.TryParse(Console.ReadLine(), out answer))
     {
-        int firstNumber = 0, secondNumber = 0;
-        int findNumber = 0;
-        
-        //start game
-        Console.WriteLine("Enter first and last number in game");
-        firstNumber = Convert.ToInt32(Console.ReadLine());
-        secondNumber = Convert.ToInt32(Console.ReadLine());
-        //Exception
-        if (firstNumber == secondNumber) 
+        Console.WriteLine("Error");
+        continue;
+    }    
+
+    if (answer != 1)
+        break;
+    
+
+    Console.WriteLine("Enter borders");
+    if (!int.TryParse(Console.ReadLine(), out bottom))
+    {
+        Console.WriteLine("Error");
+        continue;
+    }
+    if (!int.TryParse(Console.ReadLine(), out top))
+    {
+        Console.WriteLine("Error");
+        continue;
+    }
+
+    IDesiredNumber desiredNumber = new DesiredNumber(rnd.Next(bottom, top));
+
+    do
+    {
+        Console.WriteLine("Enter you number");
+
+        if (!int.TryParse(Console.ReadLine(), out trialNumber))
         {
-            Console.WriteLine("Error, enter the numbers again");
-            Start();
+            Console.WriteLine("Error");
+            continue;
         }
-        //random
-        Random rnd = new();
-        findNumber = rnd.Next(firstNumber, secondNumber);
-        GameIteration(findNumber);
-    }
 
-    private void GameIteration(int findNumber)
-    {
-        Console.WriteLine("Enter a random number");
-        int guessNumber = Convert.ToInt32(Console.ReadLine());
-        if (guessNumber == findNumber) 
-            EndGame();
+        CompareTypes typeOfNumber = desiredNumber.CompareNumber(trialNumber);
+        //logic
+        if (typeOfNumber == CompareTypes.Bigger)
+            Console.WriteLine("bigger");
+        else if (typeOfNumber == CompareTypes.less)
+            Console.WriteLine("less");
         else
-            Console.WriteLine("that number" + (guessNumber > findNumber ? " bigger" : " lower"));
-        GameIteration(findNumber);
-    }
+        {
+            Console.WriteLine("win");
+            break;
+        }
 
-    private void EndGame()
-    {
-        Console.WriteLine("Win");
-        Console.WriteLine("next? \n0 - yes, 1 - no");
-        int answer = Convert.ToInt32(Console.ReadLine());
-        if (answer == 1)
-            Environment.Exit(0);
-        else if (answer == 0)
-            Start();
-        else Start();//////////
-    }
-}
+    } while (true);
 
-class Program
-{
-    static void Main(string[] args)
-    {
-        Game game = new Game();
-        game.Start();
-    }
-}
+
+    
+
+} while (true);
